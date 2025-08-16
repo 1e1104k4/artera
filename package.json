@@ -3,8 +3,8 @@
   "version": "3.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
-    "build": "tsx lib/db/migrate && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint && biome lint --write --unsafe",
     "lint:fix": "next lint --fix && biome lint --write --unsafe",
