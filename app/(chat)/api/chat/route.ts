@@ -23,6 +23,7 @@ import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
+import { getOpenSeaClient } from '@/lib/ai/tools/mcp-client';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
 import { entitlementsByUserType } from '@/lib/ai/entitlements';
@@ -65,6 +66,7 @@ export function getStreamContext() {
 export async function POST(request: Request) {
   let requestBody: PostRequestBody;
 
+  console.log('POST request received');
   try {
     const json = await request.json();
     requestBody = postRequestBodySchema.parse(json);
@@ -72,6 +74,7 @@ export async function POST(request: Request) {
     return new ChatSDKError('bad_request:api').toResponse();
   }
 
+  console.log('Request body parsed');
   try {
     const {
       id,
@@ -98,9 +101,9 @@ export async function POST(request: Request) {
       differenceInHours: 24,
     });
 
-    if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
-      return new ChatSDKError('rate_limit:chat').toResponse();
-    }
+    // if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
+    //   return new ChatSDKError('rate_limit:chat').toResponse();
+    // }
 
     const chat = await getChatById({ id });
 
@@ -146,35 +149,38 @@ export async function POST(request: Request) {
       ],
     });
 
+    console.log('Stream ID generated');
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
-
+    console.log('Stream ID created');
+    const openSeaClient = await getOpenSeaClient(); 
+    const allTools = await openSeaClient.tools();
+    // console.log('All tools',allTools);
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel, requestHints }),
+          system: `You are an AI assistant showcasing OpenSea's MCP capabilities. Focus on NFTs, tokens, collections, and market data. 
+Use MCP tools to provide accurate information. Be direct, concise, and helpful. Give quick, actionable responses. When using tools, briefly mention what you're doing.
+The UI supports markdown, when showing images always use markdown. Use Markdown titles etc..
+Prioritize speed and clarity over lengthy explanations.`,
+          // system: [
+          //   `You are a helpful assistant that has access to OpenSea's MCP server.`,
+          //   `You should try to answer the users request without asking for more information.`,
+          //   `If there are more than one results, return them then ask the user which result they want to use.`,
+          //   `Always attempt to use the available tools`
+          //   `You can use the following tools to help the user: ${Object.keys(allTools).map((tool) => tool).join(', ')}.`,
+
+          //   //  `Your goal is to find the users NFT collection and then find collections that share traits.`
+          //   ].join('\n'),
           messages: convertToModelMessages(uiMessages),
-          stopWhen: stepCountIs(5),
-          experimental_activeTools:
-            selectedChatModel === 'chat-model-reasoning'
-              ? []
-              : [
-                  'getWeather',
-                  'createDocument',
-                  'updateDocument',
-                  'requestSuggestions',
-                ],
+          stopWhen: stepCountIs(20),
+          experimental_activeTools: [
+            'mcpOpenSea',
+          ],
           experimental_transform: smoothStream({ chunking: 'word' }),
-          tools: {
-            getWeather,
-            createDocument: createDocument({ session, dataStream }),
-            updateDocument: updateDocument({ session, dataStream }),
-            requestSuggestions: requestSuggestions({
-              session,
-              dataStream,
-            }),
-          },
+          tools: allTools,
+          // toolChoice: 'required',
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
             functionId: 'stream-text',
@@ -191,6 +197,7 @@ export async function POST(request: Request) {
       },
       generateId: generateUUID,
       onFinish: async ({ messages }) => {
+        console.log('Messages', messages);
         await saveMessages({
           messages: messages.map((message) => ({
             id: message.id,
@@ -202,7 +209,8 @@ export async function POST(request: Request) {
           })),
         });
       },
-      onError: () => {
+      onError: (error: any) => {
+        console.log('Error', error);
         return 'Oops, an error occurred!';
       },
     });
@@ -210,15 +218,18 @@ export async function POST(request: Request) {
     const streamContext = getStreamContext();
 
     if (streamContext) {
+      console.log('Stream context created');
       return new Response(
         await streamContext.resumableStream(streamId, () =>
           stream.pipeThrough(new JsonToSseTransformStream()),
         ),
       );
     } else {
+      console.log('Stream context not created');
       return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
     }
   } catch (error) {
+    console.log('Error', error);
     if (error instanceof ChatSDKError) {
       return error.toResponse();
     }

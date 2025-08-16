@@ -33,6 +33,9 @@
   - [Vercel Blob](https://vercel.com/storage/blob) for efficient file storage
 - [Auth.js](https://authjs.dev)
   - Simple and secure authentication
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
+  - Integration with OpenSea MCP server for NFT marketplace data
+  - Extensible tool system for connecting to external MCP servers
 
 ## Model Providers
 
@@ -60,3 +63,61 @@ pnpm dev
 ```
 
 Your app template should now be running on [localhost:3000](http://localhost:3000).
+
+## MCP Integration
+
+This chatbot includes integration with the Model Context Protocol (MCP), allowing it to connect to external MCP servers and access their tools and data.
+
+### OpenSea MCP Server
+
+The chatbot is pre-configured to connect to the OpenSea MCP server, providing access to NFT marketplace data and tools.
+
+**Available Actions:**
+- `search_collections` - Search for NFT collections
+- `search_items` - Search for NFT items
+- `get_collection` - Get information about a specific collection
+- `get_item` - Get information about a specific NFT item
+- `get_token` - Get information about a specific token
+- `search_tokens` - Search for tokens
+- `get_token_swap_quote` - Get swap quote for tokens
+- `get_token_balances` - Get token balances for an address
+- `get_token_balance` - Get balance of a specific token
+- `get_nft_balances` - Get NFT balances for an address
+- `get_top_collections` - Get top NFT collections
+- `get_trending_collections` - Get trending NFT collections
+- `get_top_tokens` - Get top tokens
+- `get_trending_tokens` - Get trending tokens
+- `search` - General search across OpenSea
+- `get_profile` - Get user profile information
+- `fetch` - Fetch data from OpenSea
+- `list_tools` - Get available tools from the MCP server
+
+**Example Usage:**
+```
+User: "Get information about the Bored Ape Yacht Club collection"
+AI: I'll search for information about the Bored Ape Yacht Club collection using the OpenSea MCP server.
+[Tool call: mcpOpenSea with action="get_collection" and params={"collection_slug": "boredapeyachtclub"}]
+
+User: "Show me the top trending NFT collections"
+AI: I'll fetch the trending NFT collections from OpenSea.
+[Tool call: mcpOpenSea with action="get_trending_collections" and params={}]
+
+User: "Search for NFT items with the keyword 'ape'"
+AI: I'll search for NFT items with the keyword 'ape' on OpenSea.
+[Tool call: mcpOpenSea with action="search_items" and params={"query": "ape"}]
+```
+
+### Adding Custom MCP Servers
+
+To add your own MCP server endpoints, modify the configuration in `lib/ai/mcp-config.ts`:
+
+```typescript
+export const CUSTOM_MCP_CONFIG: MCPServerConfig = {
+  url: "https://your-mcp-server.com/mcp",
+  headers: {
+    "Authorization": "Bearer your-access-token"
+  }
+};
+```
+
+Then create a corresponding tool in `lib/ai/tools/` and integrate it into the chat route.

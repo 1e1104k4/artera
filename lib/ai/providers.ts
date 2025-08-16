@@ -4,6 +4,7 @@ import {
   wrapLanguageModel,
 } from 'ai';
 import { xai } from '@ai-sdk/xai';
+import { openai } from '@ai-sdk/openai';
 import {
   artifactModel,
   chatModel,
@@ -28,6 +29,7 @@ export const myProvider = isTestEnvironment
           model: xai('grok-3-mini-beta'),
           middleware: extractReasoningMiddleware({ tagName: 'think' }),
         }),
+        'gpt-5': openai('gpt-5'),
         'title-model': xai('grok-2-1212'),
         'artifact-model': xai('grok-2-1212'),
       },
