@@ -104,6 +104,8 @@ export async function POST(request: Request) {
 							if (collectionResult?.output?.content?.[0]?.text) {
 								const jsonText = collectionResult.output.content[0].text as string;
 								const parsed = JSON.parse(jsonText);
+								// Emit preview JSON so the sidebar can render details immediately
+								dataStream.write({ type: 'data-collectionJson', data: parsed, transient: true });
 								const savedId = generateUUID();
 								await saveCollectionJson({ id: savedId, data: parsed });
 								dataStream.write({ type: 'data-id', data: savedId, transient: true });

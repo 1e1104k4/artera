@@ -26,12 +26,13 @@ export default async function NewCollectionPage() {
 			initialModel={initialModel}
 			session={session}
 			hideSidebar
-			greetingProps={{ title: 'Expand your collections network.', subtitle: 'what is the name of your collection?' }}
+			hideRightPaneUntilData
+			greetingProps={{ title: 'Expand your NFT collections network.', subtitle: 'what is the name of your collection?' }}
 		>
 			<NavigateOnCollectionId />
 			<div className="flex flex-col gap-6 p-6">
 				<CollectionStreamPreview />
-				<StepOneForm />
+				{/* <StepOneForm /> */}
 			</div>
 		</CollectionsChatShell>
 	);
