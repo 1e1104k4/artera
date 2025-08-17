@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
 
-export const Greeting = () => {
+export const Greeting = ({
+  title = 'Hello there!',
+  subtitle = 'How can I help you today?',
+}: {
+  title?: string;
+  subtitle?: string;
+}) => {
   return (
     <div
       key="overview"
@@ -13,7 +19,7 @@ export const Greeting = () => {
         transition={{ delay: 0.5 }}
         className="text-2xl font-semibold"
       >
-        Hello there!
+        {title}
       </motion.div>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -22,7 +28,7 @@ export const Greeting = () => {
         transition={{ delay: 0.6 }}
         className="text-2xl text-zinc-500"
       >
-        How can I help you today?
+        {subtitle}
       </motion.div>
     </div>
   );

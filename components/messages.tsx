@@ -18,6 +18,7 @@ interface MessagesProps {
   regenerate: UseChatHelpers<ChatMessage>['regenerate'];
   isReadonly: boolean;
   isArtifactVisible: boolean;
+  greetingProps?: { title?: string; subtitle?: string; hidden?: boolean };
 }
 
 function PureMessages({
@@ -28,6 +29,7 @@ function PureMessages({
   setMessages,
   regenerate,
   isReadonly,
+  greetingProps,
 }: MessagesProps) {
   const {
     containerRef: messagesContainerRef,
@@ -42,12 +44,16 @@ function PureMessages({
 
   useDataStream();
 
+  const shouldShowGreeting = messages.length === 0 && !greetingProps?.hidden;
+
   return (
     <div
       ref={messagesContainerRef}
       className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4 relative"
     >
-      {messages.length === 0 && <Greeting />}
+      {shouldShowGreeting && (
+        <Greeting title={greetingProps?.title} subtitle={greetingProps?.subtitle} />
+      )}
 
       {messages.map((message, index) => (
         <PreviewMessage

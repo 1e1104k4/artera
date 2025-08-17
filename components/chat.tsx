@@ -31,6 +31,9 @@ export function Chat({
   isReadonly,
   session,
   autoResume,
+  hideDeploy,
+  hideModelAndVisibility,
+  greetingProps,
 }: {
   id: string;
   initialMessages: ChatMessage[];
@@ -39,6 +42,9 @@ export function Chat({
   isReadonly: boolean;
   session: Session;
   autoResume: boolean;
+  hideDeploy?: boolean;
+  hideModelAndVisibility?: boolean;
+  greetingProps?: { title?: string; subtitle?: string; hidden?: boolean };
 }) {
   const { visibilityType } = useChatVisibility({
     chatId: id,
@@ -135,6 +141,8 @@ export function Chat({
           selectedVisibilityType={initialVisibilityType}
           isReadonly={isReadonly}
           session={session}
+          hideDeploy={hideDeploy}
+          hideModelAndVisibility={hideModelAndVisibility}
         />
 
         <Messages
@@ -146,6 +154,7 @@ export function Chat({
           regenerate={regenerate}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
+          greetingProps={greetingProps}
         />
 
         <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
@@ -162,6 +171,7 @@ export function Chat({
               setMessages={setMessages}
               sendMessage={sendMessage}
               selectedVisibilityType={visibilityType}
+              hideSuggestedActions
             />
           )}
         </form>

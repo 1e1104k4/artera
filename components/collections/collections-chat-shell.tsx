@@ -1,0 +1,54 @@
+'use client';
+
+import * as React from 'react';
+import { DataStreamProvider } from '@/components/data-stream-provider';
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { Chat } from '@/components/chat';
+import { DataStreamHandler } from '@/components/data-stream-handler';
+import type { Session } from 'next-auth';
+
+export default function CollectionsChatShell({
+	id,
+	initialModel,
+	session,
+	children,
+	hideSidebar = false,
+}: {
+	id: string;
+	initialModel: string;
+	session: Session;
+	children: React.ReactNode;
+	hideSidebar?: boolean;
+}) {
+	return (
+		<DataStreamProvider>
+			<SidebarProvider defaultOpen>
+				{!hideSidebar ? <AppSidebar user={session.user} /> : null}
+				<SidebarInset>
+					<div className="flex h-dvh">
+						<div className="flex-1 min-w-0 border-r">
+							<Chat
+								key={id}
+								id={id}
+								initialMessages={[]}
+								initialChatModel={initialModel}
+								initialVisibilityType="private"
+								isReadonly={false}
+								session={session}
+								autoResume={false}
+								hideDeploy
+								hideModelAndVisibility
+								greetingProps={{ title: 'Expand your collections network.', subtitle: 'what is the name of your collection?' }}
+							/>
+							<DataStreamHandler />
+						</div>
+						<div className="w-full max-w-xl overflow-auto">
+							{children}
+						</div>
+					</div>
+				</SidebarInset>
+			</SidebarProvider>
+		</DataStreamProvider>
+	);
+} 
