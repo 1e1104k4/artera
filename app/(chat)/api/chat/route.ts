@@ -21,39 +21,13 @@ import { generateTitleFromUserMessage } from '../../actions';
 import { getOpenSeaClient, getENSClient } from '@/lib/ai/tools/mcp-client';
 import { myProvider } from '@/lib/ai/providers';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
-import {
-  createResumableStreamContext,
-  type ResumableStreamContext,
-} from 'resumable-stream';
-import { after } from 'next/server';
+import { getStreamContext } from '@/lib/stream-context';
 import { ChatSDKError } from '@/lib/errors';
 import type { ChatMessage } from '@/lib/types';
 import type { ChatModel } from '@/lib/ai/models';
 import type { VisibilityType } from '@/components/visibility-selector';
 
 export const maxDuration = 60;
-
-let globalStreamContext: ResumableStreamContext | null = null;
-
-export function getStreamContext() {
-  if (!globalStreamContext) {
-    try {
-      globalStreamContext = createResumableStreamContext({
-        waitUntil: after,
-      });
-    } catch (error: any) {
-      if (error.message.includes('REDIS_URL')) {
-        console.log(
-          ' > Resumable streams are disabled due to missing REDIS_URL',
-        );
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
-  return globalStreamContext;
-}
 
 export async function POST(request: Request) {
   let requestBody: PostRequestBody;
@@ -152,20 +126,10 @@ export async function POST(request: Request) {
 Use MCP tools to provide accurate information. Be direct, concise, and helpful. Give quick, actionable responses. When using tools, briefly mention what you're doing.
 The UI supports markdown, when showing images always use markdown. Use Markdown titles etc..
 Prioritize speed and clarity over lengthy explanations.`,
-          // system: [
-          //   `You are a helpful assistant that has access to OpenSea's MCP server.`,
-          //   `You should try to answer the users request without asking for more information.`,
-          //   `If there are more than one results, return them then ask the user which result they want to use.`,
-          //   `Always attempt to use the available tools`
-          //   `You can use the following tools to help the user: ${Object.keys(allTools).map((tool) => tool).join(', ')}.`,
-
-          //   //  `Your goal is to find the users NFT collection and then find collections that share traits.`
-          //   ].join('\n'),
           messages: convertToModelMessages(uiMessages),
           stopWhen: stepCountIs(20),
           experimental_transform: smoothStream({ chunking: 'word' }),
           tools: allTools,
-          // toolChoice: 'required'
         });
 
         result.consumeStream();
