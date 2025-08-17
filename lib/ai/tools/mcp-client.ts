@@ -11,14 +11,16 @@ export async function getOpenSeaClient() {
   if (!openSeaClient) {
     try {
     openSeaClient = await experimental_createMCPClient({
-      start: console.log,
-      send: console.log,
-      close: console.log,
-      open: console.log,
-      onclose: console.log,
-      onerror: console.log,
-      onmessage: console.log,
+      // start: console.log,
+      // send: console.log,
+      // close: console.log,
+      // open: console.log,
+      // onclose: console.log,
+      
       transport: {
+        onclose: console.log,
+        onerror: console.log,
+      onmessage: console.log,
         type: 'sse',
         url: "https://mcp.opensea.io/sse",
         headers: {

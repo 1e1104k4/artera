@@ -1,6 +1,7 @@
 import {
   convertToModelMessages,
   createUIMessageStream,
+  experimental_createMCPClient,
   JsonToSseTransformStream,
   smoothStream,
   stepCountIs,
@@ -127,14 +128,6 @@ export async function POST(request: Request) {
     const messagesFromDb = await getMessagesByChatId({ id });
     const uiMessages = [...convertToUIMessages(messagesFromDb), message];
 
-    const { longitude, latitude, city, country } = geolocation(request);
-
-    const requestHints: RequestHints = {
-      longitude,
-      latitude,
-      city,
-      country,
-    };
 
     await saveMessages({
       messages: [
@@ -153,7 +146,24 @@ export async function POST(request: Request) {
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
     console.log('Stream ID created');
-    const openSeaClient = await getOpenSeaClient(); 
+    const openSeaClient = await experimental_createMCPClient({
+      // start: console.log,
+      // send: console.log,
+      // close: console.log,
+      // open: console.log,
+      // onclose: console.log,
+      
+      transport: {
+        onclose: console.log,
+        onerror: console.log,
+        onmessage: console.log,
+        type: 'sse',
+        url: "https://mcp.opensea.io/sse",
+        headers: {
+            'Authorization': 'Bearer jRCXEr3mobnxTzGa83X1p2jWtH0RX3IBlEk0ALq8Xw'
+        }
+      }
+    });
     const allTools = await openSeaClient.tools();
     // console.log('All tools',allTools);
     const stream = createUIMessageStream({
@@ -175,16 +185,9 @@ Prioritize speed and clarity over lengthy explanations.`,
           //   ].join('\n'),
           messages: convertToModelMessages(uiMessages),
           stopWhen: stepCountIs(20),
-          experimental_activeTools: [
-            'mcpOpenSea',
-          ],
           experimental_transform: smoothStream({ chunking: 'word' }),
           tools: allTools,
-          // toolChoice: 'required',
-          experimental_telemetry: {
-            isEnabled: isProductionEnvironment,
-            functionId: 'stream-text',
-          },
+          // toolChoice: 'required'
         });
 
         result.consumeStream();
