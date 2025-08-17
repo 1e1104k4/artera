@@ -12,6 +12,13 @@ export const OPENSEA_MCP_CONFIG: MCPServerConfig = {
   }
 };
 
+export const ENS_MCP_CONFIG: MCPServerConfig = {
+  url: "https://ethid-mcp.efp.workers.dev/mcp",
+  sseUrl: "https://ethid-mcp.efp.workers.dev/sse",
+  headers: {}
+};
+
 export const MCP_SERVERS: Record<string, MCPServerConfig> = {
   opensea: OPENSEA_MCP_CONFIG,
+  ens: ENS_MCP_CONFIG,
 };
