@@ -40,6 +40,9 @@ export default function CollectionsChatShell({
 								hideDeploy
 								hideModelAndVisibility
 								greetingProps={{ title: 'Expand your collections network.', subtitle: 'what is the name of your collection?' }}
+								apiEndpoint="/api/collections/new"
+								historyBasePath="/collections/new"
+								disableHistoryRewrite
 							/>
 							<DataStreamHandler />
 						</div>

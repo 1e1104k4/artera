@@ -34,6 +34,9 @@ export function Chat({
   hideDeploy,
   hideModelAndVisibility,
   greetingProps,
+  apiEndpoint = '/api/chat',
+  historyBasePath = '/chat',
+  disableHistoryRewrite = false,
 }: {
   id: string;
   initialMessages: ChatMessage[];
@@ -45,6 +48,9 @@ export function Chat({
   hideDeploy?: boolean;
   hideModelAndVisibility?: boolean;
   greetingProps?: { title?: string; subtitle?: string; hidden?: boolean };
+  apiEndpoint?: string;
+  historyBasePath?: string;
+  disableHistoryRewrite?: boolean;
 }) {
   const { visibilityType } = useChatVisibility({
     chatId: id,
@@ -70,7 +76,7 @@ export function Chat({
     experimental_throttle: 100,
     generateId: generateUUID,
     transport: new DefaultChatTransport({
-      api: '/api/chat',
+      api: apiEndpoint,
       fetch: fetchWithErrorHandlers,
       prepareSendMessagesRequest({ messages, id, body }) {
         return {
@@ -172,6 +178,8 @@ export function Chat({
               sendMessage={sendMessage}
               selectedVisibilityType={visibilityType}
               hideSuggestedActions
+              historyBasePath={historyBasePath}
+              disableHistoryRewrite={disableHistoryRewrite}
             />
           )}
         </form>

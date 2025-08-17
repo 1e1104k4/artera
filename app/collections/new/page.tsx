@@ -6,6 +6,7 @@ import { generateUUID } from "@/lib/utils";
 import { auth } from "@/app/(auth)/auth";
 import StepOneForm from "@/components/collections/step-one-form";
 import CollectionsChatShell from "@/components/collections/collections-chat-shell";
+import NavigateOnCollectionId from "@/components/collections/navigate-on-collection-id";
 
 export default async function NewCollectionPage() {
 	const session = await auth();
@@ -20,6 +21,7 @@ export default async function NewCollectionPage() {
 
 	return (
 		<CollectionsChatShell id={id} initialModel={initialModel} session={session} hideSidebar>
+			<NavigateOnCollectionId />
 			<StepOneForm />
 		</CollectionsChatShell>
 	);

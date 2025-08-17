@@ -512,6 +512,7 @@ export async function createStreamId({
       .insert(stream)
       .values({ id: streamId, chatId, createdAt: new Date() });
   } catch (error) {
+    console.error('Failed to create stream id', error);
     throw new ChatSDKError(
       'bad_request:database',
       'Failed to create stream id',

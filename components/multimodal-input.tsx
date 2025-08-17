@@ -43,6 +43,8 @@ function PureMultimodalInput({
   className,
   selectedVisibilityType,
   hideSuggestedActions,
+  historyBasePath = '/chat',
+  disableHistoryRewrite = false,
 }: {
   chatId: string;
   input: string;
@@ -57,6 +59,8 @@ function PureMultimodalInput({
   className?: string;
   selectedVisibilityType: VisibilityType;
   hideSuggestedActions?: boolean;
+  historyBasePath?: string;
+  disableHistoryRewrite?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -111,7 +115,10 @@ function PureMultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
-    window.history.replaceState({}, '', `/chat/${chatId}`);
+    if (!disableHistoryRewrite) {
+      const base = historyBasePath?.replace(/\/$/, '') || '';
+      window.history.replaceState({}, '', `${base}/${chatId}`);
+    }
 
     sendMessage({
       role: 'user',
@@ -146,6 +153,8 @@ function PureMultimodalInput({
     setLocalStorageInput,
     width,
     chatId,
+    historyBasePath,
+    disableHistoryRewrite,
   ]);
 
   const uploadFile = async (file: File) => {
