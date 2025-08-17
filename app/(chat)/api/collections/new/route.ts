@@ -92,6 +92,7 @@ export async function POST(request: Request) {
 						saveCollection: saveCollection({ session, dataStream }),
 					},
 					onStepFinish: async (step) => {
+						console.log('onStepFinish', step);
 						try {
 							// Attempt to capture the collection from a get_collection tool result
 							// and persist it as raw JSON into the collections table.
