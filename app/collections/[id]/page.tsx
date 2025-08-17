@@ -20,6 +20,17 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 	const row = await getCollectionById({ id });
 	const data = row?.data ?? null;
 
+	// Build a concise starter query from the data, if available
+	let starterQuery: string | undefined;
+	if (data) {
+		const root: any = (data as any).collection ?? data;
+		const name = root?.name ?? 'this collection';
+		const chain = root?.chain?.identifier ?? root?.chain?.name ?? root?.chain_identifier;
+		const standard = root?.standard ?? root?.primary_asset_contracts?.[0]?.schema_name;
+		const address = root?.address ?? root?.primary_asset_contracts?.[0]?.address;
+		starterQuery = `Find other NFT collections with similar traits to ${name}${address ? ` (contract ${address})` : ''}${chain ? ` on ${chain}` : ''}${standard ? ` using ${standard}` : ''}.`;
+	}
+
 	return (
 		<CollectionsChatShell
 			id={id}
@@ -27,6 +38,7 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 			session={session}
 			hideSidebar
 			greetingProps={{ title: 'Finding Collections', subtitle: 'Looking for shared traits' }}
+			starterQuery={starterQuery}
 		>
 			<div className="flex flex-col gap-6 p-6">
 				{data ? (

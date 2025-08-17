@@ -1,7 +1,7 @@
 'use client';
 
 import { DefaultChatTransport } from 'ai';
-import { useChat } from '@ai-sdk/react';
+import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
@@ -37,6 +37,7 @@ export function Chat({
   apiEndpoint = '/api/chat',
   historyBasePath = '/chat',
   disableHistoryRewrite = false,
+  starterQuery,
 }: {
   id: string;
   initialMessages: ChatMessage[];
@@ -51,6 +52,7 @@ export function Chat({
   apiEndpoint?: string;
   historyBasePath?: string;
   disableHistoryRewrite?: boolean;
+  starterQuery?: string;
 }) {
   const { visibilityType } = useChatVisibility({
     chatId: id,
@@ -70,9 +72,9 @@ export function Chat({
     stop,
     regenerate,
     resumeStream,
-  } = useChat<ChatMessage>({
+  } = useChat({
     id,
-    messages: initialMessages,
+    messages: initialMessages as UseChatHelpers['messages'],
     experimental_throttle: 100,
     generateId: generateUUID,
     transport: new DefaultChatTransport({
@@ -82,7 +84,7 @@ export function Chat({
         return {
           body: {
             id,
-            message: messages.at(-1),
+            message: (messages as any).at(-1),
             selectedChatModel: initialChatModel,
             selectedVisibilityType: visibilityType,
             ...body,
@@ -90,8 +92,8 @@ export function Chat({
         };
       },
     }),
-    onData: (dataPart) => {
-      setDataStream((ds) => (ds ? [...ds, dataPart] : []));
+    onData: (dataPart: any) => {
+      setDataStream((ds: any) => (ds ? [...ds, dataPart] : []));
     },
     onFinish: () => {
       mutate(unstable_serialize(getChatHistoryPaginationKey));
@@ -104,24 +106,35 @@ export function Chat({
         });
       }
     },
-  });
+  } as any);
 
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
 
   const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
+  const [hasAppendedStarterQuery, setHasAppendedStarterQuery] = useState(false);
 
   useEffect(() => {
     if (query && !hasAppendedQuery) {
       sendMessage({
         role: 'user' as const,
         parts: [{ type: 'text', text: query }],
-      });
+      } as any);
 
       setHasAppendedQuery(true);
-      window.history.replaceState({}, '', `/chat/${id}`);
+      window.history.replaceState({}, '', `${historyBasePath}/${id}`);
     }
-  }, [query, sendMessage, hasAppendedQuery, id]);
+  }, [query, sendMessage, hasAppendedQuery, id, historyBasePath]);
+
+  useEffect(() => {
+    if (starterQuery && !hasAppendedStarterQuery) {
+      sendMessage({
+        role: 'user' as const,
+        parts: [{ type: 'text', text: starterQuery }],
+      } as any);
+      setHasAppendedStarterQuery(true);
+    }
+  }, [starterQuery, hasAppendedStarterQuery, sendMessage]);
 
   const { data: votes } = useSWR<Array<Vote>>(
     messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
@@ -155,9 +168,9 @@ export function Chat({
           chatId={id}
           status={status}
           votes={votes}
-          messages={messages}
-          setMessages={setMessages}
-          regenerate={regenerate}
+          messages={messages as any}
+          setMessages={setMessages as any}
+          regenerate={regenerate as any}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
           greetingProps={greetingProps}
@@ -169,13 +182,13 @@ export function Chat({
               chatId={id}
               input={input}
               setInput={setInput}
-              status={status}
-              stop={stop}
+              status={status as any}
+              stop={stop as any}
               attachments={attachments}
               setAttachments={setAttachments}
-              messages={messages}
-              setMessages={setMessages}
-              sendMessage={sendMessage}
+              messages={messages as any}
+              setMessages={setMessages as any}
+              sendMessage={sendMessage as any}
               selectedVisibilityType={visibilityType}
               hideSuggestedActions
               historyBasePath={historyBasePath}
@@ -189,14 +202,14 @@ export function Chat({
         chatId={id}
         input={input}
         setInput={setInput}
-        status={status}
-        stop={stop}
+        status={status as any}
+        stop={stop as any}
         attachments={attachments}
         setAttachments={setAttachments}
-        sendMessage={sendMessage}
-        messages={messages}
-        setMessages={setMessages}
-        regenerate={regenerate}
+        sendMessage={sendMessage as any}
+        messages={messages as any}
+        setMessages={setMessages as any}
+        regenerate={regenerate as any}
         votes={votes}
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
