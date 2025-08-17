@@ -9,6 +9,7 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -168,3 +169,12 @@ export const stream = pgTable(
 );
 
 export type Stream = InferSelectModel<typeof stream>;
+
+// New: NFT Collections JSON storage (plural table name)
+export const collections = pgTable('collections', {
+  id: uuid('id').notNull().defaultRandom().primaryKey(),
+  createdAt: timestamp('createdAt').notNull(),
+  data: jsonb('data').notNull(),
+});
+
+export type Collection = InferSelectModel<typeof collections>;

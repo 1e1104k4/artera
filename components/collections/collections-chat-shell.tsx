@@ -14,12 +14,14 @@ export default function CollectionsChatShell({
 	session,
 	children,
 	hideSidebar = false,
+	greetingProps,
 }: {
 	id: string;
 	initialModel: string;
 	session: Session;
 	children: React.ReactNode;
 	hideSidebar?: boolean;
+	greetingProps?: { title?: string; subtitle?: string; hidden?: boolean };
 }) {
 	return (
 		<DataStreamProvider>
@@ -39,7 +41,7 @@ export default function CollectionsChatShell({
 								autoResume={false}
 								hideDeploy
 								hideModelAndVisibility
-								greetingProps={{ title: 'Expand your collections network.', subtitle: 'what is the name of your collection?' }}
+								greetingProps={greetingProps}
 								apiEndpoint="/api/collections/new"
 								historyBasePath="/collections/new"
 								disableHistoryRewrite

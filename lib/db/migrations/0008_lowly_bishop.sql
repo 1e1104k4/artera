@@ -1,0 +1,1 @@
+ALTER TABLE "collections" ALTER COLUMN "data" SET DATA TYPE jsonb;

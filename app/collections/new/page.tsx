@@ -7,6 +7,7 @@ import { auth } from "@/app/(auth)/auth";
 import StepOneForm from "@/components/collections/step-one-form";
 import CollectionsChatShell from "@/components/collections/collections-chat-shell";
 import NavigateOnCollectionId from "@/components/collections/navigate-on-collection-id";
+import CollectionStreamPreview from "@/components/collections/collection-stream-preview";
 
 export default async function NewCollectionPage() {
 	const session = await auth();
@@ -20,9 +21,18 @@ export default async function NewCollectionPage() {
 	const initialModel = modelIdFromCookie?.value ?? DEFAULT_CHAT_MODEL;
 
 	return (
-		<CollectionsChatShell id={id} initialModel={initialModel} session={session} hideSidebar>
+		<CollectionsChatShell
+			id={id}
+			initialModel={initialModel}
+			session={session}
+			hideSidebar
+			greetingProps={{ title: 'Expand your collections network.', subtitle: 'what is the name of your collection?' }}
+		>
 			<NavigateOnCollectionId />
-			<StepOneForm />
+			<div className="flex flex-col gap-6 p-6">
+				<CollectionStreamPreview />
+				<StepOneForm />
+			</div>
 		</CollectionsChatShell>
 	);
 } 

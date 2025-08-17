@@ -27,6 +27,7 @@ import {
   type DBMessage,
   type Chat,
   stream,
+  collections,
 } from './schema';
 import type { ArtifactKind } from '@/components/artifact';
 import { generateUUID } from '../utils';
@@ -535,5 +536,31 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
       'bad_request:database',
       'Failed to get stream ids by chat id',
     );
+  }
+}
+
+export async function saveCollectionJson({
+  id,
+  data,
+}: {
+  id: string;
+  data: any;
+}) {
+  try {
+    return await db
+      .insert(collections)
+      .values({ id, createdAt: new Date(), data })
+      .returning();
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to save collection');
+  }
+}
+
+export async function getCollectionById({ id }: { id: string }) {
+  try {
+    const [row] = await db.select().from(collections).where(eq(collections.id, id));
+    return row;
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to get collection by id');
   }
 }

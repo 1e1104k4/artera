@@ -2,8 +2,8 @@ import { tool, type UIMessageStreamWriter } from 'ai';
 import { z } from 'zod';
 import type { Session } from 'next-auth';
 import type { ChatMessage } from '@/lib/types';
-import { saveDocument } from '@/lib/db/queries';
 import { generateUUID } from '@/lib/utils';
+import { saveCollectionJson } from '@/lib/db/queries';
 
 interface SaveCollectionProps {
 	session: Session;
@@ -15,32 +15,15 @@ export const saveCollection = ({ session, dataStream }: SaveCollectionProps) =>
 		description:
 			'Save a confirmed NFT collection to the database. Only call this after the user confirms the collection is correct.',
 		inputSchema: z.object({
-			name: z.string(),
-			slug: z.string().optional(),
-			address: z.string(),
-			chain: z.string(),
-			imageUrl: z.string().url().optional(),
-			externalUrl: z.string().url().optional(),
-			openseaUrl: z.string().url().optional(),
-			description: z.string().optional(),
-			traits: z.record(z.any()).default({}).optional(),
-			stats: z.record(z.any()).optional(),
+			collection_name_json: z.record(z.any()),
 		}),
-		execute: async (input) => {
+		execute: async ({ collection_name_json }) => {
 			const id = generateUUID();
 
-			const title = `Collection: ${input.name}`;
-			const content = JSON.stringify({ id, ...input }, null, 2);
+			await saveCollectionJson({ id, data: collection_name_json });
 
-			await saveDocument({
-				id,
-				title,
-				kind: 'text',
-				content,
-				userId: session.user.id,
-			});
-
-			dataStream.write({ type: 'data-title', data: title, transient: true });
+			// Stream entire JSON and the saved id back to the client
+			dataStream.write({ type: 'data-collectionJson', data: collection_name_json, transient: true });
 			dataStream.write({ type: 'data-id', data: id, transient: true });
 			dataStream.write({ type: 'data-finish', data: null, transient: true });
 

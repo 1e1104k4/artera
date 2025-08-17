@@ -42,6 +42,8 @@ export type CustomUIDataTypes = {
   kind: ArtifactKind;
   clear: null;
   finish: null;
+  // New: full JSON payload for saved collection
+  collectionJson: any;
 };
 
 export type ChatMessage = UIMessage<

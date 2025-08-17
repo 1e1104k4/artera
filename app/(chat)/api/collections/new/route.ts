@@ -17,6 +17,7 @@ import type { ChatMessage } from '@/lib/types';
 import { postRequestBodySchema, type PostRequestBody } from '../../chat/schema';
 import { ChatSDKError } from '@/lib/errors';
 import { generateTitleFromUserMessage } from '../../../actions';
+import { saveCollectionJson } from '@/lib/db/queries';
 
 export const maxDuration = 60;
 
@@ -89,6 +90,28 @@ export async function POST(request: Request) {
 					tools: {
 						...allTools,
 						saveCollection: saveCollection({ session, dataStream }),
+					},
+					onStepFinish: async (step) => {
+						try {
+							// Attempt to capture the collection from a get_collection tool result
+							// and persist it as raw JSON into the collections table.
+							// This is complementary to the saveCollection tool and helps when
+							// the model surfaces the JSON but does not call the tool.
+							const content: any[] = (step as any)?.content ?? [];
+							const collectionResult = content.find(
+								(c) => c?.type === 'tool-result' && c?.toolName === 'get_collection',
+							);
+							if (collectionResult?.output?.content?.[0]?.text) {
+								const jsonText = collectionResult.output.content[0].text as string;
+								const parsed = JSON.parse(jsonText);
+								const savedId = generateUUID();
+								await saveCollectionJson({ id: savedId, data: parsed });
+								dataStream.write({ type: 'data-id', data: savedId, transient: true });
+								dataStream.write({ type: 'data-finish', data: null, transient: true });
+							}
+						} catch (err) {
+							console.error('collections/new onStepFinish error', err);
+						}
 					},
 				});
 
