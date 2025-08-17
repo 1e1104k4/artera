@@ -10,7 +10,7 @@ test.describe('Collections wizard - Step 1', () => {
 		await page.goto('/collections/new');
 
 		// Left panel greeting from the chat shell
-		await expect(page.getByText('Expand your collections network.')).toBeVisible();
+		await expect(page.getByText('Expand your NFT collections network.')).toBeVisible();
 		await expect(page.getByText('what is the name of your collection?')).toBeVisible();
         await expect(page.getByPlaceholder('Send a message...')).toBeVisible();
 

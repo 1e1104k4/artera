@@ -32,6 +32,7 @@ export default function CollectionsChatShell({
 	hideSidebar = false,
 	greetingProps,
 	hideRightPaneUntilData,
+	starterQuery,
 }: {
 	id: string;
 	initialModel: string;
@@ -40,6 +41,7 @@ export default function CollectionsChatShell({
 	hideSidebar?: boolean;
 	greetingProps?: { title?: string; subtitle?: string; hidden?: boolean };
 	hideRightPaneUntilData?: boolean;
+	starterQuery?: string;
 }) {
 	return (
 		<DataStreamProvider>
@@ -63,6 +65,7 @@ export default function CollectionsChatShell({
 								apiEndpoint="/api/collections/new"
 								historyBasePath="/collections/new"
 								disableHistoryRewrite
+								starterQuery={starterQuery}
 							/>
 							<DataStreamHandler />
 						</div>
