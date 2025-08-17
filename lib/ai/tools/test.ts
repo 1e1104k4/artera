@@ -1,8 +1,7 @@
-import { experimental_createMCPClient, streamText } from 'ai'
+import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai';
+import { getOpenSeaClient } from './mcp-client';
 
-
-const openSeaClient = await experimental_createMCPClient({ 
-    transport: { type: 'sse', url: 'https://mcp.opensea.io/sse', headers: { 'Authorization': 'Bearer TOKEN' } } }
-);
+// Use the centralized MCP client
+const openSeaClient = await getOpenSeaClient();
 const allTools = await openSeaClient.tools();

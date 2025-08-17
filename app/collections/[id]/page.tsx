@@ -28,7 +28,7 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 		const chain = root?.chain?.identifier ?? root?.chain?.name ?? root?.chain_identifier;
 		const standard = root?.standard ?? root?.primary_asset_contracts?.[0]?.schema_name;
 		const address = root?.address ?? root?.primary_asset_contracts?.[0]?.address;
-		starterQuery = `Find other NFT collections with similar traits to ${name}${address ? ` (contract ${address})` : ''}${chain ? ` on ${chain}` : ''}${standard ? ` using ${standard}` : ''}. Return token holder addresses and their ENS.`;
+		starterQuery = `Find other NFT collections with similar traits to ${name}${address ? ` (contract ${address})` : ''}${chain ? ` on ${chain}` : ''}${standard ? ` using ${standard}` : ''}. Return token holder addresses that have ENS names.`;
 	}
 
 	return (

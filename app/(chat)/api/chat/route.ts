@@ -1,7 +1,6 @@
 import {
   convertToModelMessages,
   createUIMessageStream,
-  experimental_createMCPClient,
   JsonToSseTransformStream,
   smoothStream,
   stepCountIs,
@@ -24,7 +23,7 @@ import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
-import { getOpenSeaClient } from '@/lib/ai/tools/mcp-client';
+import { getOpenSeaClient, getENSClient } from '@/lib/ai/tools/mcp-client';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
 import { entitlementsByUserType } from '@/lib/ai/entitlements';
@@ -142,29 +141,16 @@ export async function POST(request: Request) {
       ],
     });
 
-    console.log('Stream ID generated');
-    const streamId = generateUUID();
-    await createStreamId({ streamId, chatId: id });
-    console.log('Stream ID created');
-    const openSeaClient = await experimental_createMCPClient({
-      // start: console.log,
-      // send: console.log,
-      // close: console.log,
-      // open: console.log,
-      // onclose: console.log,
-      
-      transport: {
-        onclose: console.log,
-        onerror: console.log,
-        onmessage: console.log,
-        type: 'sse',
-        url: "https://mcp.opensea.io/sse",
-        headers: {
-            'Authorization': 'Bearer jRCXEr3mobnxTzGa83X1p2jWtH0RX3IBlEk0ALq8Xw'
-        }
-      }
-    });
-    const allTools = await openSeaClient.tools();
+         console.log('Stream ID generated');
+     const streamId = generateUUID();
+     await createStreamId({ streamId, chatId: id });
+          console.log('Stream ID created');
+     const openSeaClient = await getOpenSeaClient();
+     const ensClient = await getENSClient();
+     
+     const openSeaTools = await openSeaClient.tools();
+     const ensTools = await ensClient.tools();
+     const allTools = { ...openSeaTools, ...ensTools };
     // console.log('All tools',allTools);
     const stream = createUIMessageStream({
       execute: ({ writer: dataStream }) => {
