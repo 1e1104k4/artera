@@ -18,7 +18,6 @@ import {
 } from '@/lib/db/queries';
 import { convertToUIMessages, generateUUID } from '@/lib/utils';
 import { generateTitleFromUserMessage } from '../../actions';
-import { getOpenSeaClient, getENSClient } from '@/lib/ai/tools/mcp-client';
 import { myProvider } from '@/lib/ai/providers';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
 import { getStreamContext } from '@/lib/stream-context';
@@ -111,11 +110,57 @@ export async function POST(request: Request) {
      const streamId = generateUUID();
      await createStreamId({ streamId, chatId: id });
           console.log('Stream ID created');
-     const openSeaClient = await getOpenSeaClient();
-     const ensClient = await getENSClient();
      
-     const openSeaTools = await openSeaClient.tools();
-     const ensTools = await ensClient.tools();
+// Initialize MCP client
+let openSeaClient: any = null;
+
+ async function getOpenSeaClient() {
+  console.log('Getting OpenSea client');
+  if (!openSeaClient) {
+    try {
+      openSeaClient = await experimental_createMCPClient({
+        transport: {
+          onclose: console.log,
+          onerror: console.log,
+          onmessage: console.log,
+          type: 'sse',
+          url: OPENSEA_MCP_CONFIG.sseUrl,
+          headers: OPENSEA_MCP_CONFIG.headers
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  console.log('OpenSea client initialized');
+  return openSeaClient;
+}
+
+// Initialize ENS MCP client
+let ensClient: any = null;
+
+ async function getENSClient() {
+  console.log('Getting ENS client');
+  if (!ensClient) {
+    try {
+      ensClient = await experimental_createMCPClient({
+        transport: {
+          onclose: console.log,
+          onerror: console.log,
+          onmessage: console.log,
+          type: 'sse',
+          url: ENS_MCP_CONFIG.sseUrl,
+          headers: ENS_MCP_CONFIG.headers
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  console.log('ENS client initialized');
+  return ensClient;
+}
+
      const allTools = { ...openSeaTools, ...ensTools };
     // console.log('All tools',allTools);
     const stream = createUIMessageStream({
