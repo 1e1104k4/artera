@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 
 export default function CollectionDetails({ data }: { data: any }) {
 	// Normalize a few common fields from various possible shapes
@@ -43,12 +44,12 @@ export default function CollectionDetails({ data }: { data: any }) {
 			<div className="space-y-4">
 				{bannerImageUrl ? (
 					<div className="h-40 w-full overflow-hidden rounded-lg bg-muted">
-						<img src={bannerImageUrl} alt={name} className="h-full w-full object-cover" />
+						<Image src={bannerImageUrl} alt={name} width={1200} height={160} className="size-full object-cover" />
 					</div>
 				) : null}
 				<div className="flex items-start gap-4">
-					<div className="h-20 w-20 overflow-hidden rounded bg-muted">
-						{imageUrl ? <img src={imageUrl} alt={name} className="h-20 w-20 object-cover" /> : null}
+					<div className="size-20 overflow-hidden rounded bg-muted">
+						{imageUrl ? <Image src={imageUrl} alt={name} width={80} height={80} className="size-20 object-cover" /> : null}
 					</div>
 					<div className="flex-1 min-w-0">
 						<h1 className="truncate text-2xl font-semibold tracking-tight">{name}</h1>
@@ -114,10 +115,11 @@ export default function CollectionDetails({ data }: { data: any }) {
 				<div className="text-sm text-muted-foreground">Creator fees</div>
 				{creatorFees.length > 0 ? (
 					<ul className="mt-2 space-y-2">
-						{creatorFees.map((fee, idx) => {
+						{creatorFees.map((fee) => {
 							const pct = typeof fee.feeBasisPoints === 'number' ? fee.feeBasisPoints / 100 : undefined;
+							const key = `${fee.recipient}-${fee.feeBasisPoints}`;
 							return (
-								<li key={idx} className="flex flex-col">
+								<li key={key} className="flex flex-col">
 									<span className="font-mono text-sm break-all">{fee.recipient}</span>
 									<span className="text-xs text-muted-foreground">{pct !== undefined ? `${pct}%` : `${fee.feeBasisPoints} bps`}</span>
 								</li>

@@ -25,9 +25,9 @@ export function MCPStatus() {
   const getStatusIcon = () => {
     switch (status) {
       case 'connected':
-        return <CheckCircleFillIcon className="h-4 w-4 text-green-500" />;
+        return <CheckCircleFillIcon className="size-4 text-green-500" />;
       case 'disconnected':
-        return <div className="h-4 w-4 text-red-500" >X</div>;
+        return <div className="size-4 text-red-500" >X</div>;
       case 'checking':
         return <LoaderIcon size={16} className="text-yellow-500 animate-spin" />;
     }

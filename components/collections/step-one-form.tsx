@@ -57,7 +57,7 @@ export default function StepOneForm() {
 									alt={name || "Collection image"}
 									width={64}
 									height={64}
-									className="h-16 w-16 object-cover"
+									className="size-16 object-cover"
 								/>
 							) : null}
 						</div>

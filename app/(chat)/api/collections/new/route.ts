@@ -1,14 +1,13 @@
 import {
 	convertToModelMessages,
 	createUIMessageStream,
-	experimental_createMCPClient,
 	JsonToSseTransformStream,
 	smoothStream,
 	stepCountIs,
 	streamText,
 } from 'ai';
-import { auth, type UserType } from '@/app/(auth)/auth';
-import { getChatById, getMessagesByChatId, saveChat, saveMessages } from '@/lib/db/queries';
+import { auth } from '@/app/(auth)/auth';
+import { getChatById, getMessagesByChatId, saveChat, saveMessages, saveCollectionJson } from '@/lib/db/queries';
 import { convertToUIMessages, generateUUID } from '@/lib/utils';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { myProvider } from '@/lib/ai/providers';
@@ -17,7 +16,7 @@ import type { ChatMessage } from '@/lib/types';
 import { postRequestBodySchema, type PostRequestBody } from '../../chat/schema';
 import { ChatSDKError } from '@/lib/errors';
 import { generateTitleFromUserMessage } from '../../../actions';
-import { saveCollectionJson } from '@/lib/db/queries';
+import { getENSClient, getOpenSeaClient } from '@/lib/ai/tools/mcp-client';
 
 export const maxDuration = 60;
 
@@ -59,20 +58,8 @@ export async function POST(request: Request) {
 		const messagesFromDb = await getMessagesByChatId({ id });
 		const uiMessages = [...convertToUIMessages(messagesFromDb), message] as ChatMessage[];
 
-		const openSeaClient = await experimental_createMCPClient({
-			transport: {
-				onclose: console.log,
-				onerror: console.log,
-				onmessage: console.log,
-				type: 'sse',
-				url: 'https://mcp.opensea.io/sse',
-				headers: {
-					Authorization: 'Bearer jRCXEr3mobnxTzGa83X1p2jWtH0RX3IBlEk0ALq8Xw',
-				},
-			},
-		});
-		const allTools = await openSeaClient.tools();
-
+		const openSeaTools = (await getOpenSeaClient()).tools();
+		const ensTools = (await getENSClient()).tools();
 		const stream = createUIMessageStream({
 			execute: ({ writer: dataStream }) => {
 				const result = streamText({
@@ -88,16 +75,13 @@ export async function POST(request: Request) {
 					stopWhen: stepCountIs(30),
 					experimental_transform: smoothStream({ chunking: 'word' }),
 					tools: {
-						...allTools,
+						...ensTools,
+						...openSeaTools,
 						saveCollection: saveCollection({ session, dataStream }),
 					},
 					onStepFinish: async (step) => {
 						console.log('onStepFinish', step);
 						try {
-							// Attempt to capture the collection from a get_collection tool result
-							// and persist it as raw JSON into the collections table.
-							// This is complementary to the saveCollection tool and helps when
-							// the model surfaces the JSON but does not call the tool.
 							const content: any[] = (step as any)?.content ?? [];
 							const collectionResult = content.find(
 								(c) => c?.type === 'tool-result' && c?.toolName === 'get_collection',

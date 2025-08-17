@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import { generateUUID } from "@/lib/utils";
 import { auth } from "@/app/(auth)/auth";
-import StepOneForm from "@/components/collections/step-one-form";
 import CollectionsChatShell from "@/components/collections/collections-chat-shell";
 import NavigateOnCollectionId from "@/components/collections/navigate-on-collection-id";
 import CollectionStreamPreview from "@/components/collections/collection-stream-preview";
