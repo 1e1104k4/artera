@@ -1,7 +1,6 @@
 import {
   convertToModelMessages,
   createUIMessageStream,
-  experimental_createMCPClient,
   JsonToSseTransformStream,
   smoothStream,
   stepCountIs,
@@ -142,28 +141,11 @@ export async function POST(request: Request) {
       ],
     });
 
-    console.log('Stream ID generated');
-    const streamId = generateUUID();
-    await createStreamId({ streamId, chatId: id });
-    console.log('Stream ID created');
-    const openSeaClient = await experimental_createMCPClient({
-      // start: console.log,
-      // send: console.log,
-      // close: console.log,
-      // open: console.log,
-      // onclose: console.log,
-      
-      transport: {
-        onclose: console.log,
-        onerror: console.log,
-        onmessage: console.log,
-        type: 'sse',
-        url: "https://mcp.opensea.io/sse",
-        headers: {
-            'Authorization': 'Bearer jRCXEr3mobnxTzGa83X1p2jWtH0RX3IBlEk0ALq8Xw'
-        }
-      }
-    });
+         console.log('Stream ID generated');
+     const streamId = generateUUID();
+     await createStreamId({ streamId, chatId: id });
+     console.log('Stream ID created');
+     const openSeaClient = await getOpenSeaClient();
     const allTools = await openSeaClient.tools();
     // console.log('All tools',allTools);
     const stream = createUIMessageStream({
