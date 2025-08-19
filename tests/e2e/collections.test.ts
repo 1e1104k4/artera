@@ -3,7 +3,7 @@ import { test, expect } from '../fixtures';
 // Minimal flow test for the new Collections wizard starting at /collections/new
 // Uses an authenticated context to avoid guest redirect to '/'
 
-test.describe.only('Collections wizard - Step 1', () => {
+test.describe('Collections wizard - Step 1', () => {
 	test('loads step one and enables Next after required fields', async ({ adaContext }) => {
 		const { page } = adaContext;
 

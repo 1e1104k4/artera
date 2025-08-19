@@ -50,14 +50,14 @@ export default function StepOneForm() {
 				</CardHeader>
 				<CardContent>
 					<div className="flex items-start gap-4">
-						<div className="h-16 w-16 overflow-hidden rounded bg-muted">
+						<div className="size-16 overflow-hidden rounded bg-muted">
 							{imageUrl ? (
 								<Image
 									src={imageUrl}
 									alt={name || "Collection image"}
 									width={64}
 									height={64}
-									className="h-16 w-16 object-cover"
+									className="size-16 object-cover"
 								/>
 							) : null}
 						</div>

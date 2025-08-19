@@ -50,9 +50,9 @@ export default function CollectionStreamPreview() {
 				{json ? (
 					<div className="flex flex-col gap-3">
 						<div className="flex items-start gap-4">
-							<div className="h-16 w-16 overflow-hidden rounded bg-muted">
+							<div className="size-16 overflow-hidden rounded bg-muted">
 								{imageUrl ? (
-									<img src={imageUrl} alt={name} className="h-16 w-16 object-cover" />
+									<img src={imageUrl} alt={name} className="size-16 object-cover" />
 								) : null}
 							</div>
 							<div className="flex-1">

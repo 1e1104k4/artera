@@ -7,8 +7,8 @@ import {
 	stepCountIs,
 	streamText,
 } from 'ai';
-import { auth, type UserType } from '@/app/(auth)/auth';
-import { getChatById, getMessagesByChatId, saveChat, saveMessages } from '@/lib/db/queries';
+import { auth, } from '@/app/(auth)/auth';
+import { getChatById, getMessagesByChatId, saveChat, saveMessages , saveCollectionJson } from '@/lib/db/queries';
 import { convertToUIMessages, generateUUID } from '@/lib/utils';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { myProvider } from '@/lib/ai/providers';
@@ -17,7 +17,6 @@ import type { ChatMessage } from '@/lib/types';
 import { postRequestBodySchema, type PostRequestBody } from '../../chat/schema';
 import { ChatSDKError } from '@/lib/errors';
 import { generateTitleFromUserMessage } from '../../../actions';
-import { saveCollectionJson } from '@/lib/db/queries';
 
 export const maxDuration = 60;
 

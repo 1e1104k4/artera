@@ -1,5 +1,3 @@
-import { tool } from 'ai';
-import { z } from 'zod';
 import { experimental_createMCPClient } from 'ai';
 import { OPENSEA_MCP_CONFIG, ENS_MCP_CONFIG } from '../mcp-config';
 

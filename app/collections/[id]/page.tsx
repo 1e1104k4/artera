@@ -66,12 +66,12 @@ export default async function CollectionDetailPage({ params }: { params: { id: s
 				<div className="space-y-4">
 					{bannerImageUrl ? (
 						<div className="h-40 w-full overflow-hidden rounded-lg bg-muted">
-							<img src={bannerImageUrl} alt={name} className="h-full w-full object-cover" />
+							<img src={bannerImageUrl} alt={name} className="size-full object-cover" />
 						</div>
 					) : null}
 					<div className="flex items-start gap-4">
-						<div className="h-20 w-20 overflow-hidden rounded bg-muted">
-							{imageUrl ? <img src={imageUrl} alt={name} className="h-20 w-20 object-cover" /> : null}
+						<div className="size-20 overflow-hidden rounded bg-muted">
+							{imageUrl ? <img src={imageUrl} alt={name} className="size-20 object-cover" /> : null}
 						</div>
 						<div className="flex-1 min-w-0">
 							<h1 className="truncate text-2xl font-semibold tracking-tight">{name}</h1>
@@ -137,10 +137,10 @@ export default async function CollectionDetailPage({ params }: { params: { id: s
 					<div className="text-sm text-muted-foreground">Creator fees</div>
 					{creatorFees.length > 0 ? (
 						<ul className="mt-2 space-y-2">
-							{creatorFees.map((fee, idx) => {
+							{creatorFees.map((fee) => {
 								const pct = typeof fee.feeBasisPoints === 'number' ? fee.feeBasisPoints / 100 : undefined;
 								return (
-									<li key={idx} className="flex flex-col">
+									<li key={fee.recipient} className="flex flex-col">
 										<span className="font-mono text-sm break-all">{fee.recipient}</span>
 										<span className="text-xs text-muted-foreground">{pct !== undefined ? `${pct}%` : `${fee.feeBasisPoints} bps`}</span>
 									</li>
