@@ -127,18 +127,10 @@ jobs:
           path: ./playwright-report/
           retention-days: 30
 
-      - name: Upload test screenshots
+      - name: Upload Playwright test artifacts
         uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: playwright-screenshots
-          path: ./test-results/**/test-failed-*.png
-          retention-days: 30
-
-      - name: Upload test videos
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-videos
-          path: ./test-results/**/video.webm
+          path: ./test-results/
           retention-days: 30
