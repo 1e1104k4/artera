@@ -5,8 +5,13 @@ import { CollectionsPage } from '../pages/collections';
 // Uses an authenticated context to avoid guest redirect to '/'
 
 test.describe('Collections wizard - Step 1', () => {
-	test('loads step one and enables Next after required fields', async ({ adaContext }) => {
-		const { page } = adaContext;
+    let collectionsPage: CollectionsPage;
+
+    test.beforeEach(async ({page}) => {
+      collectionsPage = new CollectionsPage(page);
+      await page.goto('/collections/new');
+    });
+	test('loads step one and enables Next after required fields', async ({ page }) => {
 
 
 		await expect(page.getByText('Expand your collections network.')).toBeVisible();
@@ -16,12 +21,13 @@ test.describe('Collections wizard - Step 1', () => {
         await collectionsPage.sendUserMessage('My collection is called EON MUN');
         await collectionsPage.isGenerationComplete();
         
+        const assistantMessage = page.getByTestId('message-assistant').last();
 
-        await expect(page.getByText('Contract Address')).toBeVisible();
-        await expect(page.getByText('0xf5521d34bd29f942523a7c125ffe0e06b6d41836')).toBeVisible();
+        await expect(assistantMessage.getByText('Contract Address')).toBeVisible();
+        await expect(assistantMessage.getByText('0xf5521d34bd29f942523a7c125ffe0e06b6d41836')).toBeVisible();
 
-        await expect(page.getByText('OpenSea URL')).toBeVisible();
-        await expect(page.getByText('https://opensea.io/collection/eon-mun')).toBeVisible();
+        await expect(assistantMessage.getByText('OpenSea URL')).toBeVisible();
+        await expect(assistantMessage.getByText('https://opensea.io/collection/eon-mun')).toBeVisible();
 
 
 	});
