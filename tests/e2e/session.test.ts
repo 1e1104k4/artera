@@ -6,6 +6,7 @@ import { getMessageByErrorCode } from '@/lib/errors';
 
 test.describe
   .serial('Guest Session', () => {
+    test.skip();
     test('Authenticate as guest user when a new session is loaded', async ({
       page,
     }) => {

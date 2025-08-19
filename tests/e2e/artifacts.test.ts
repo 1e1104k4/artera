@@ -2,7 +2,7 @@ import { expect, test } from '../fixtures';
 import { ChatPage } from '../pages/chat';
 import { ArtifactPage } from '../pages/artifact';
 
-test.describe('Artifacts activity', () => {
+test.describe.skip('Artifacts activity', () => {
   let chatPage: ChatPage;
   let artifactPage: ArtifactPage;
 

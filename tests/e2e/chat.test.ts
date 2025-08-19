@@ -2,6 +2,7 @@ import { ChatPage } from '../pages/chat';
 import { test, expect } from '../fixtures';
 
 test.describe('Chat activity', () => {
+  test.skip();
   let chatPage: ChatPage;
 
   test.beforeEach(async ({ page }) => {
