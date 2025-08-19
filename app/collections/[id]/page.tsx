@@ -5,7 +5,8 @@ import { auth } from '@/app/(auth)/auth';
 import CollectionsChatShell from '@/components/collections/collections-chat-shell';
 import { getCollectionById } from '@/lib/db/queries';
 
-export default async function CollectionDetailPage({ params }: { params: { id: string } }) {
+export default async function CollectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+	const { id } = await params;
 	const session = await auth();
 	if (!session) {
 		redirect('/api/auth/guest');
@@ -15,7 +16,7 @@ export default async function CollectionDetailPage({ params }: { params: { id: s
 	const modelIdFromCookie = cookieStore.get('chat-model');
 	const initialModel = modelIdFromCookie?.value ?? DEFAULT_CHAT_MODEL;
 
-	const row = await getCollectionById({ id: params.id });
+	const row = await getCollectionById({ id });
 	const data = row?.data ?? null;
 
 	// Normalize a few common fields from various possible shapes
@@ -56,7 +57,7 @@ export default async function CollectionDetailPage({ params }: { params: { id: s
 
 	return (
 		<CollectionsChatShell
-			id={params.id}
+			id={id}
 			initialModel={initialModel}
 			session={session}
 			hideSidebar
