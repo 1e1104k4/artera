@@ -8,7 +8,7 @@ import type { Chat } from '@/lib/db/schema';
 import { ChatSDKError } from '@/lib/errors';
 import type { ChatMessage } from '@/lib/types';
 import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
-import { getStreamContext } from '@/lib/streams';
+import { getStreamContext } from '../../route';
 import { differenceInSeconds } from 'date-fns';
 
 export async function GET(
