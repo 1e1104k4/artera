@@ -2,7 +2,7 @@
 
 import { DefaultChatTransport } from 'ai';
 import type { DataUIPart } from 'ai';
-import type { CustomUIDataTypes } from '@/lib/types';
+import type { CustomUIDataTypes , Attachment, ChatMessage } from '@/lib/types';
 import { useChat } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
@@ -22,7 +22,6 @@ import { useSearchParams } from 'next/navigation';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import { ChatSDKError } from '@/lib/errors';
-import type { Attachment, ChatMessage } from '@/lib/types';
 import { useDataStream } from './data-stream-provider';
 
 export function Chat({

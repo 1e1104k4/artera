@@ -14,9 +14,9 @@ import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { myProvider } from '@/lib/ai/providers';
 import { saveCollection } from '@/lib/ai/tools/save-collection';
 import type { ChatMessage } from '@/lib/types';
-import { postRequestBodySchema, type PostRequestBody } from '../../chat/schema';
+import { postRequestBodySchema, type PostRequestBody } from '@/app/(chat)/api/chat/schema';
 import { ChatSDKError } from '@/lib/errors';
-import { generateTitleFromUserMessage } from '../../../actions';
+import { generateTitleFromUserMessage } from '@/app/(chat)/actions';
 
 export const maxDuration = 60;
 
