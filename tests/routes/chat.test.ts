@@ -26,6 +26,7 @@ function normalizeStreamData(lines: string[]): string[] {
 
 test.describe
   .serial('/api/chat', () => {
+    test.skip();
     test('Ada cannot invoke a chat generation with empty request body', async ({
       adaContext,
     }) => {

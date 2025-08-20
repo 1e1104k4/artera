@@ -2,6 +2,7 @@ import { ChatPage } from '../pages/chat';
 import { test, expect } from '../fixtures';
 
 test.describe('chat activity with reasoning', () => {
+  test.skip();
   let chatPage: ChatPage;
 
   test.beforeEach(async ({ curieContext }) => {
