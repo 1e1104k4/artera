@@ -1,13 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { DataStreamProvider } from '@/components/data-stream-provider';
+import { DataStreamProvider , useDataStream } from '@/components/data-stream-provider';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Chat } from '@/components/chat';
 import { DataStreamHandler } from '@/components/data-stream-handler';
 import type { Session } from 'next-auth';
-import { useDataStream } from '@/components/data-stream-provider';
 
 function RightPane({ children, hideUntilData }: { children: React.ReactNode; hideUntilData?: boolean }) {
 	const { dataStream } = useDataStream();
