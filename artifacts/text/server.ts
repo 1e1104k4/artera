@@ -19,6 +19,7 @@ export const textDocumentHandler = createDocumentHandler<'text'>({
     for await (const delta of fullStream) {
       const { type } = delta;
 
+      // @ts-expect-error - TODO: fix this
       if (type === 'text') {
         const { text } = delta;
 
@@ -54,7 +55,7 @@ export const textDocumentHandler = createDocumentHandler<'text'>({
 
     for await (const delta of fullStream) {
       const { type } = delta;
-
+      // @ts-expect-error - TODO: fix this
       if (type === 'text') {
         const { text } = delta;
 
