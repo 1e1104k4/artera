@@ -64,9 +64,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
 		const system = [
 			'You are helping the user analyze an NFT collection and find similar collections.',
-			'Given the context below, respond concisely and helpfully. Prioritize verified, official data.',
+			'Given the context below, respond concisely and helpfully.',
 			'If suggesting similar collections, provide name, chain, contract address, and a one-line reason.',
-			'Ask a brief follow-up to refine the search if needed.',
+			// 'For each collection returned fetch the nft holders of the collection with ENS names',
+			// 'Ask a brief follow-up to refine the search if needed.',
 			collectionData ? `Context: ${JSON.stringify(collectionData).slice(0, 4000)}` : '',
 		].filter(Boolean).join('\n');
 

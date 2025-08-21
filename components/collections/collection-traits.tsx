@@ -44,6 +44,17 @@ function normalizeTraitsFromJson(json: any): Array<NormalizedTraitValue> {
 			.slice(0, 20);
 	}
 
+	// Case 3: Simple attributes array at collection level: [{ traitType, value }]
+	const attributes = root?.attributes;
+	if (Array.isArray(attributes)) {
+		return (attributes as any[])
+			.map((a) => ({
+				traitType: String(a.traitType ?? a.type ?? a.name ?? 'trait'),
+				value: String(a.value ?? a.val ?? a.label ?? '—'),
+			}))
+			.slice(0, 20);
+	}
+
 	return [];
 }
 
@@ -56,14 +67,14 @@ export default function CollectionTraits() {
 		for (let i = dataStream.length - 1; i >= 0; i--) {
 			const part = dataStream[i];
 			if (part.type === 'data-collectionJson') {
-				setJson(part.data as any);
+				setJson(part.data.collections[0] as any);
 				break;
 			}
 		}
-	}, [dataStream]);
+	}, [dataStream,]);
 
 	const traits = useMemo(() => normalizeTraitsFromJson(Array.isArray(json?.collections) ? json.collections[0] : json), [json]);
-
+	console.log('traits', json);
 	return (
 		<div className="rounded border p-4">
 			<div className="text-sm font-medium">Top Traits</div>

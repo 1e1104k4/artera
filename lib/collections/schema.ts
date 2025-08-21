@@ -121,6 +121,7 @@ export const collectionSchema = z.object({
 	floorPrice: floorPriceSchema.optional().nullable(),
 	chain: chainSchema.optional(),
 	sampleItems: z.array(sampleItemSchema).optional(),
+	attributes: z.array(attributeSchema).optional(),
 });
 
 export const getCollectionsResponseSchema = z.object({

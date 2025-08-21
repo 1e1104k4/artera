@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { auth } from '@/app/(auth)/auth';
 import { getCollectionById } from '@/lib/db/queries';
+import CollectionsChatShell from '@/components/collections/collections-chat-shell';
+import CollectionDetails from '@/components/collections/collection-details';
 
 export default async function CollectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
@@ -29,27 +31,24 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 		const address = root?.address ?? root?.primary_asset_contracts?.[0]?.address;
 		starterQuery = `Find other NFT collections with similar traits to ${name}${address ? ` (contract ${address})` : ''}${chain ? ` on ${chain}` : ''}${standard ? ` using ${standard}` : ''}. Be sure to return the link to each collection on opensea`;
 	}
-	// Debug only - remove this line
-	// TODO addres in next PR
-	return <div>{JSON.stringify(data)}</div>
-	// return (
-	// 	<CollectionsChatShell
-	// 		id={id}
-	// 		initialModel={initialModel}
-	// 		session={session!}
-	// 		hideSidebar
-	// 		greetingProps={{ title: 'Finding Collections', subtitle: 'Looking for shared traits' }}
-	// 		starterQuery={starterQuery}
-	// 		apiEndpoint={`/api/collections/${id}`}
-	// 		historyBasePath="/collections"
-	// 	>
-	// 		<div className="flex flex-col gap-6 p-6">
-	// 			{data ? (
-	// 				<CollectionDetails data={data} />
-	// 			) : (
-	// 				<div className="text-sm text-muted-foreground">No data found for this collection.</div>
-	// 			)}
-	// 		</div>
-	// 	</CollectionsChatShell>
-	// );
+	return (
+		<CollectionsChatShell
+			id={id}
+			initialModel={initialModel}
+			session={session}
+			hideSidebar
+			greetingProps={{ title: 'Finding Collections', subtitle: 'Looking for shared traits' }}
+			starterQuery={starterQuery}
+			apiEndpoint={`/api/collections/${id}`}
+			historyBasePath="/collections"
+		>
+			<div className="flex flex-col gap-6 p-6">
+				{data ? (
+					<CollectionDetails data={data} />
+				) : (
+					<div className="text-sm text-muted-foreground">No data found for this collection.</div>
+				)}
+			</div>
+		</CollectionsChatShell>
+	);
 } 

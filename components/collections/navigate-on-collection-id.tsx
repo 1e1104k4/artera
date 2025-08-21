@@ -25,12 +25,15 @@ export default function NavigateOnCollectionId() {
 
 	const onNext = React.useCallback(async () => {
 		if (!collectionJson || isSaving) return;
+		// TODO need better way to ensure this is the correct collection
+		// We need to prob expose a tool to the llm that chooses the correct collection and we can listen for that tool call
+		const collection = collectionJson.collections[0];
 		setIsSaving(true);
 		try {
 			const response = await fetch('/api/collections/save', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ data: collectionJson }),
+				body: JSON.stringify({ data: collection }),
 			});
 			if (!response.ok) throw new Error('Failed to save collection');
 			const { id } = await response.json();

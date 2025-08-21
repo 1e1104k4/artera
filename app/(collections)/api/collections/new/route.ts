@@ -81,6 +81,7 @@ export async function POST(request: Request) {
 						'1) Use MCP tools to search and identify a single best match (prefer verified official contract).',
 						"2) Present the found collection's name, image URL, contract address, chain, OpenSea URL, website URL, and a short description.",
 						'3) If this is the correct answer click the button in the top right, if not provide more details.',
+						'4) When searching for collections ensure you fetch the traits for the collection.',
 					].join('\n'),
 					messages: convertToModelMessages(uiMessages),
 					stopWhen: stepCountIs(30),
