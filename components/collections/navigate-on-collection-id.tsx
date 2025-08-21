@@ -9,36 +9,47 @@ import { Button } from '@/components/ui/button';
 export default function NavigateOnCollectionId() {
 	const { dataStream } = useDataStream();
 	const router = useRouter();
-	const [collectionId, setCollectionId] = useState<string | null>(null);
+	const [collectionJson, setCollectionJson] = useState<any | null>(null);
+	const [isSaving, setIsSaving] = useState(false);
 
 	useEffect(() => {
 		if (!dataStream || dataStream.length === 0) return;
 		for (let i = dataStream.length - 1; i >= 0; i--) {
 			const part = dataStream[i];
-			if (part.type === 'data-id') {
-				const id = String(part.data || '').trim();
-				if (id) {
-					setCollectionId(id);
-					break;
-				}
+			if (part.type === 'data-collectionJson') {
+				setCollectionJson(part.data as any);
+				break;
 			}
 		}
 	}, [dataStream]);
 
-	const onNext = React.useCallback(() => {
-		if (collectionId) {
-			router.push(`/collections/${collectionId}`);
+	const onNext = React.useCallback(async () => {
+		if (!collectionJson || isSaving) return;
+		setIsSaving(true);
+		try {
+			const response = await fetch('/api/collections/save', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ data: collectionJson }),
+			});
+			if (!response.ok) throw new Error('Failed to save collection');
+			const { id } = await response.json();
+			router.push(`/collections/${id}`);
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setIsSaving(false);
 		}
-	}, [collectionId, router]);
+	}, [collectionJson, isSaving, router]);
 
 	return (
 		<div className="p-6">
 			<div className="flex items-center justify-between gap-3">
 				<div className="text-sm text-muted-foreground">
-					{collectionId ? 'Collection found. Review and continue when ready.' : 'Waiting for a collection to be selected...'}
+					{collectionJson ? 'Collection found. Review and continue when ready.' : 'Waiting for a collection to be selected...'}
 				</div>
-				<Button onClick={onNext} disabled={!collectionId}>
-					Next
+				<Button onClick={onNext} disabled={!collectionJson || isSaving}>
+					{isSaving ? 'Saving...' : 'Next'}
 				</Button>
 			</div>
 		</div>

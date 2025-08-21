@@ -19,6 +19,7 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 
 	const row = await getCollectionById({ id });
 	const data = row?.data ?? null;
+	console.log('data', data);
 
 	// Build a concise starter query from the data, if available
 	let starterQuery: string | undefined;
@@ -28,8 +29,9 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 		const chain = root?.chain?.identifier ?? root?.chain?.name ?? root?.chain_identifier;
 		const standard = root?.standard ?? root?.primary_asset_contracts?.[0]?.schema_name;
 		const address = root?.address ?? root?.primary_asset_contracts?.[0]?.address;
-		starterQuery = `Find other NFT collections with similar traits to ${name}${address ? ` (contract ${address})` : ''}${chain ? ` on ${chain}` : ''}${standard ? ` using ${standard}` : ''}. Return token holder addresses and their ENS.`;
+		starterQuery = `Find other NFT collections with similar traits to ${name}${address ? ` (contract ${address})` : ''}${chain ? ` on ${chain}` : ''}${standard ? ` using ${standard}` : ''}. Be sure to return the link to each collection on opensea`;
 	}
+	return <div>{JSON.stringify(data)}</div>
 
 	return (
 		<CollectionsChatShell
@@ -39,6 +41,8 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 			hideSidebar
 			greetingProps={{ title: 'Finding Collections', subtitle: 'Looking for shared traits' }}
 			starterQuery={starterQuery}
+			apiEndpoint={`/api/collections/${id}`}
+			historyBasePath="/collections"
 		>
 			<div className="flex flex-col gap-6 p-6">
 				{data ? (

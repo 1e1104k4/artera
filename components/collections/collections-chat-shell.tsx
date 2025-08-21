@@ -32,6 +32,8 @@ export default function CollectionsChatShell({
 	greetingProps,
 	hideRightPaneUntilData,
 	starterQuery,
+	apiEndpoint,
+	historyBasePath,
 }: {
 	id: string;
 	initialModel: string;
@@ -41,6 +43,8 @@ export default function CollectionsChatShell({
 	greetingProps?: { title?: string; subtitle?: string; hidden?: boolean };
 	hideRightPaneUntilData?: boolean;
 	starterQuery?: string;
+	apiEndpoint: string;
+	historyBasePath: string;
 }) {
 	return (
 		<DataStreamProvider>
@@ -61,8 +65,8 @@ export default function CollectionsChatShell({
 								hideDeploy
 								hideModelAndVisibility
 								greetingProps={greetingProps}
-								apiEndpoint="/api/collections/new"
-								historyBasePath="/collections/new"
+								apiEndpoint={apiEndpoint}
+								historyBasePath={historyBasePath}
 								disableHistoryRewrite
 								starterQuery={starterQuery}
 							/>

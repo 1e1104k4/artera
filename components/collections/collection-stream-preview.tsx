@@ -24,5 +24,10 @@ export default function CollectionStreamPreview() {
 		return <div className="text-sm text-muted-foreground">No collection streamed yet.</div>;
 	}
 
-	return <CollectionDetails data={json} />;
+	const first = Array.isArray(json?.collections) ? json.collections[0] : json;
+	if (!first) {
+		return <div className="text-sm text-muted-foreground">No collection streamed yet.</div>;
+	}
+
+	return <CollectionDetails data={first} />;
 } 
