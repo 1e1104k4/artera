@@ -1,7 +1,7 @@
 'use client';
 
 import { DefaultChatTransport } from 'ai';
-import { useChat } from '@ai-sdk/react';
+import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
@@ -21,6 +21,7 @@ import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { useAutoResume } from '@/hooks/use-auto-resume';
 import { ChatSDKError } from '@/lib/errors';
 import { useDataStream } from './data-stream-provider';
+import type { ChatMessage, Attachment } from '@/lib/types';
 
 export function Chat({
   id,
@@ -73,7 +74,7 @@ export function Chat({
     resumeStream,
   } = useChat({
     id,
-    messages: initialMessages as UseChatHelpers['messages'],
+    messages: initialMessages as UseChatHelpers<ChatMessage>['messages'],
     experimental_throttle: 100,
     generateId: generateUUID,
     transport: new DefaultChatTransport({
@@ -97,7 +98,7 @@ export function Chat({
     onFinish: () => {
       mutate(unstable_serialize(getChatHistoryPaginationKey));
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       if (error instanceof ChatSDKError) {
         toast({
           type: 'error',
@@ -147,7 +148,7 @@ export function Chat({
     autoResume,
     initialMessages,
     resumeStream,
-    setMessages,
+    setMessages: setMessages as UseChatHelpers<ChatMessage>['setMessages'],
   });
 
   return (

@@ -8,7 +8,7 @@ import CollectionDetails from '@/components/collections/collection-details';
 
 export default async function CollectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
-	const session = await auth();
+	let session = await auth();
 	if (!session) {
 		redirect('/api/auth/guest');
 	}
@@ -31,13 +31,15 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 		const address = root?.address ?? root?.primary_asset_contracts?.[0]?.address;
 		starterQuery = `Find other NFT collections with similar traits to ${name}${address ? ` (contract ${address})` : ''}${chain ? ` on ${chain}` : ''}${standard ? ` using ${standard}` : ''}. Be sure to return the link to each collection on opensea`;
 	}
+	// Debug only - remove this line
+	// TODO addres in next PR
 	return <div>{JSON.stringify(data)}</div>
 
 	return (
 		<CollectionsChatShell
 			id={id}
 			initialModel={initialModel}
-			session={session}
+			session={session!}
 			hideSidebar
 			greetingProps={{ title: 'Finding Collections', subtitle: 'Looking for shared traits' }}
 			starterQuery={starterQuery}

@@ -12,7 +12,12 @@ test.describe('Collections wizard - Step 1', () => {
 		// Left panel greeting from the chat shell
 		await expect(page.getByText('Expand your NFT collections network.')).toBeVisible();
 		await expect(page.getByText('what is the name of your collection?')).toBeVisible();
-        await expect(page.getByPlaceholder('Send a message...')).toBeVisible();
+
+        page.getByPlaceholder('Send a message...').fill('EON MUN');
+		page.getByTestId('send-button').click()
+		await expect(page.getByText('https://opensea.io/collection/eon-mun')).toBeVisible();
+		page.getByText("Next").click()
+
 
 
 	});
