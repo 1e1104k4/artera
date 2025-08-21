@@ -8,9 +8,8 @@ import {
 	streamText,
 } from 'ai';
 import { auth } from '@/app/(auth)/auth';
-import { getChatById, getMessagesByChatId, saveChat, saveMessages, getCollectionById, saveCollectionJson } from '@/lib/db/queries';
+import { getChatById, getMessagesByChatId, saveChat, saveMessages, getCollectionById, } from '@/lib/db/queries';
 import { convertToUIMessages, generateUUID } from '@/lib/utils';
-import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { openai } from '@ai-sdk/openai';
 import type { ChatMessage } from '@/lib/types';
 import { postRequestBodySchema, type PostRequestBody } from '@/app/(chat)/api/chat/schema';

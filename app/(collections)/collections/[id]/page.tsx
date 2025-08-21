@@ -2,15 +2,13 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { auth } from '@/app/(auth)/auth';
-import CollectionsChatShell from '@/components/collections/collections-chat-shell';
 import { getCollectionById } from '@/lib/db/queries';
-import CollectionDetails from '@/components/collections/collection-details';
 
 export default async function CollectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
-	let session = await auth();
+	const session = await auth();
 	if (!session) {
-		redirect('/api/auth/guest');
+		return redirect('/api/auth/guest');
 	}
 
 	const cookieStore = await cookies();
@@ -34,25 +32,24 @@ export default async function CollectionDetailPage({ params }: { params: Promise
 	// Debug only - remove this line
 	// TODO addres in next PR
 	return <div>{JSON.stringify(data)}</div>
-
-	return (
-		<CollectionsChatShell
-			id={id}
-			initialModel={initialModel}
-			session={session!}
-			hideSidebar
-			greetingProps={{ title: 'Finding Collections', subtitle: 'Looking for shared traits' }}
-			starterQuery={starterQuery}
-			apiEndpoint={`/api/collections/${id}`}
-			historyBasePath="/collections"
-		>
-			<div className="flex flex-col gap-6 p-6">
-				{data ? (
-					<CollectionDetails data={data} />
-				) : (
-					<div className="text-sm text-muted-foreground">No data found for this collection.</div>
-				)}
-			</div>
-		</CollectionsChatShell>
-	);
+	// return (
+	// 	<CollectionsChatShell
+	// 		id={id}
+	// 		initialModel={initialModel}
+	// 		session={session!}
+	// 		hideSidebar
+	// 		greetingProps={{ title: 'Finding Collections', subtitle: 'Looking for shared traits' }}
+	// 		starterQuery={starterQuery}
+	// 		apiEndpoint={`/api/collections/${id}`}
+	// 		historyBasePath="/collections"
+	// 	>
+	// 		<div className="flex flex-col gap-6 p-6">
+	// 			{data ? (
+	// 				<CollectionDetails data={data} />
+	// 			) : (
+	// 				<div className="text-sm text-muted-foreground">No data found for this collection.</div>
+	// 			)}
+	// 		</div>
+	// 	</CollectionsChatShell>
+	// );
 } 
