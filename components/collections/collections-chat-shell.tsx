@@ -1,12 +1,27 @@
 'use client';
 
 import * as React from 'react';
-import { DataStreamProvider } from '@/components/data-stream-provider';
+import { DataStreamProvider , useDataStream } from '@/components/data-stream-provider';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Chat } from '@/components/chat';
 import { DataStreamHandler } from '@/components/data-stream-handler';
 import type { Session } from 'next-auth';
+
+function RightPane({ children, hideUntilData }: { children: React.ReactNode; hideUntilData?: boolean }) {
+	const { dataStream } = useDataStream();
+	const hasCollectionJson = React.useMemo(() => {
+		if (!dataStream || dataStream.length === 0) return false;
+		for (let i = dataStream.length - 1; i >= 0; i--) {
+			const part = dataStream[i];
+			if (part.type === 'data-collectionJson') return true;
+		}
+		return false;
+	}, [dataStream]);
+
+	if (hideUntilData && !hasCollectionJson) return null;
+	return <div className="w-full max-w-xl overflow-auto">{children}</div>;
+}
 
 export default function CollectionsChatShell({
 	id,
@@ -15,6 +30,10 @@ export default function CollectionsChatShell({
 	children,
 	hideSidebar = false,
 	greetingProps,
+	hideRightPaneUntilData,
+	starterQuery,
+	apiEndpoint,
+	historyBasePath,
 }: {
 	id: string;
 	initialModel: string;
@@ -22,6 +41,10 @@ export default function CollectionsChatShell({
 	children: React.ReactNode;
 	hideSidebar?: boolean;
 	greetingProps?: { title?: string; subtitle?: string; hidden?: boolean };
+	hideRightPaneUntilData?: boolean;
+	starterQuery?: string;
+	apiEndpoint: string;
+	historyBasePath: string;
 }) {
 	return (
 		<DataStreamProvider>
@@ -42,15 +65,14 @@ export default function CollectionsChatShell({
 								hideDeploy
 								hideModelAndVisibility
 								greetingProps={greetingProps}
-								apiEndpoint="/api/collections/new"
-								historyBasePath="/collections/new"
+								apiEndpoint={apiEndpoint}
+								historyBasePath={historyBasePath}
 								disableHistoryRewrite
+								starterQuery={starterQuery}
 							/>
 							<DataStreamHandler />
 						</div>
-						<div className="w-full max-w-xl overflow-auto">
-							{children}
-						</div>
+						<RightPane hideUntilData={hideRightPaneUntilData}>{children}</RightPane>
 					</div>
 				</SidebarInset>
 			</SidebarProvider>
