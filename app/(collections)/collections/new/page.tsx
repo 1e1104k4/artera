@@ -8,6 +8,7 @@ import CollectionsChatShell from "@/components/collections/collections-chat-shel
 import NavigateOnCollectionId from "@/components/collections/navigate-on-collection-id";
 import CollectionStreamPreview from "@/components/collections/collection-stream-preview";
 import CollectionTraits from "@/components/collections/collection-traits";
+import ToolCallsDisplay from "@/components/collections/tool-calls-display";
 
 export default async function NewCollectionPage() {
 	const session = await auth();
@@ -33,6 +34,7 @@ export default async function NewCollectionPage() {
 		>
 			<NavigateOnCollectionId />
 			<div className="flex flex-col gap-6 p-6">
+				<ToolCallsDisplay />
 				<CollectionStreamPreview />
 				<CollectionTraits />
 				{/* <StepOneForm /> */}
