@@ -18,9 +18,12 @@ export default function ToolCallsDisplay() {
   const [toolCalls, setToolCalls] = useState<Map<string, ToolCallData>>(new Map());
 
   useEffect(() => {
-    if (!dataStream || dataStream.length === 0) return;
+    if (!dataStream || dataStream.length === 0) {
+      setToolCalls(new Map());
+      return;
+    }
 
-    const newToolCalls = new Map(toolCalls);
+    const newToolCalls = new Map<string, ToolCallData>();
 
     // Process all tool calls and results from the data stream
     for (const part of dataStream) {

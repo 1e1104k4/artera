@@ -68,7 +68,7 @@ export function ToolCall({ toolName, input, output, state, isLoading }: ToolCall
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-6 w-6 p-0"
+            className="size-6 p-0"
           >
             <motion.div
               animate={{ rotate: isExpanded ? 180 : 0 }}
@@ -93,7 +93,7 @@ export function ToolCall({ toolName, input, output, state, isLoading }: ToolCall
               {input && (
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">Input:</h4>
-                  <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto max-h-48 overflow-y-auto">
+                  <pre className="text-xs bg-muted p-3 rounded-md overflow-auto max-h-48">
                     {formatJson(input)}
                   </pre>
                 </div>
@@ -102,7 +102,7 @@ export function ToolCall({ toolName, input, output, state, isLoading }: ToolCall
               {output && state === 'output-available' && (
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground mb-2">Output:</h4>
-                  <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto max-h-48 overflow-y-auto">
+                  <pre className="text-xs bg-muted p-3 rounded-md overflow-auto max-h-48">
                     {formatJson(output)}
                   </pre>
                 </div>
