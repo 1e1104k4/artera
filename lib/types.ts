@@ -44,6 +44,20 @@ export type CustomUIDataTypes = {
   finish: null;
   // New: full JSON payload for saved collection
   collectionJson: any;
+  // Tool call tracking
+  toolCall: {
+    toolName: string;
+    toolCallId: string;
+    input: any;
+    state: 'input-available';
+  };
+  toolResult: {
+    toolName: string;
+    toolCallId: string;
+    input: any;
+    output: any;
+    state: 'output-available';
+  };
 };
 
 export type ChatMessage = UIMessage<

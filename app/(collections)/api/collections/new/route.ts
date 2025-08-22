@@ -91,33 +91,63 @@ export async function POST(request: Request) {
 					},
 					onStepFinish: async (step) => {
 						try {
-							// Capture collections JSON from MCP get_collections results and persist
+							// Capture all tool calls and stream them to UI
 							const content: any[] = (step as any)?.content ?? [];
-							const toolResult = content.find((c) => c?.type === 'tool-result');
-							if (toolResult) {
+							const toolCalls = content.filter((c) => c?.type === 'tool-call');
+							const toolResults = content.filter((c) => c?.type === 'tool-result');
+
+							// Stream tool calls (input available)
+							for (const toolCall of toolCalls) {
+								dataStream.write({ 
+									type: 'data-toolCall', 
+									data: {
+										toolName: toolCall.toolName,
+										toolCallId: toolCall.toolCallId,
+										input: toolCall.args,
+										state: 'input-available',
+									},
+									transient: true 
+								});
+							}
+
+							// Stream tool results (output available)
+							for (const toolResult of toolResults) {
 								console.log('toolResult', {
 									toolName: toolResult.toolName,
 									input: toolResult.input,
 									output: toolResult.output?.content,
 								});
-							}
 
-							const toolName: string | undefined = toolResult?.toolName;
-							if (toolName !== 'get_collections') return;
-							const text: string | undefined = toolResult?.output?.content?.[0]?.text;
-							if (!text) return;
+								dataStream.write({ 
+									type: 'data-toolResult', 
+									data: {
+										toolName: toolResult.toolName,
+										toolCallId: toolResult.toolCallId,
+										input: toolResult.input,
+										output: toolResult.output,
+										state: 'output-available',
+									},
+									transient: true 
+								});
 
-							let normalized: any | null = null;
-							try {
-								const parsed = JSON.parse(text);
-								const safe = getCollectionsResponseSchema.parse(parsed);
-								normalized = { collections: safe.collections };
-							} catch (e) {
-								console.error('collections/new JSON parse/validate error', e);
-							}
+								// Special handling for collections data
+								const toolName: string | undefined = toolResult?.toolName;
+								if (toolName !== 'get_collections') continue;
+								const text: string | undefined = toolResult?.output?.content?.[0]?.text;
+								if (!text) continue;
 
-							if (normalized) {
-								dataStream.write({ type: 'data-collectionJson', data: normalized, transient: true });
+								let normalized: any | null = null;
+								try {
+									const parsed = JSON.parse(text);
+									const safe = getCollectionsResponseSchema.parse(parsed);
+									normalized = { collections: safe.collections };
+								} catch (e) {
+									console.error('collections/new JSON parse/validate error', e);
+								}
+
+								if (normalized) {
+									dataStream.write({ type: 'data-collectionJson', data: normalized, transient: true });
+								}
 							}
 						} catch (err) {
 							console.error('collections/new onStepFinish error', err);
